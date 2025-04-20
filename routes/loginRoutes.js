@@ -21,3 +21,5 @@ app.post(
     "/signin/verify",
     loginController.verifySignin
 );
+
+module.exports = app;

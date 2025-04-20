@@ -33,6 +33,7 @@ exports.signup = async (req, res) => {
     };
 
     let OTP = Math.floor(100000 + Math.random() * 900000);
+    console.log(OTP);
 
     let user = new userModel({
       name: name,
@@ -47,14 +48,19 @@ exports.signup = async (req, res) => {
 
     res.json({
       success: true,
-      data: savedData,
+      data: {
+        _id: savedData._id,
+        name: savedData.name,
+        email: savedData.email,
+        isAdmin: savedData.isAdmin,
+      },
     });
 
-    let userOTPTemplate = await emailTemplateModel.findOne({ name: "USER_SIGNUP_OTP" });
-    let content = eval("`" + userOTPTemplate.content + "`");
+    // let userOTPTemplate = await emailTemplateModel.findOne({ name: "USER_SIGNUP_OTP" });
+    // let content = eval("`" + userOTPTemplate.content + "`");
     let subject = "Verification OTP";
 
-    helper.sendEmail(email, subject, content)
+    // helper.sendEmail(email, subject, content)
 
   } catch (err) {
     console.log("Error in userSignup: " + err);
@@ -79,13 +85,14 @@ exports.verifySignup = async (req, res) => {
       });
     }
 
+    userData.otp = null;
     userData.isActive = true;
-    userData.save();
-    let userSignupSuccessTemplate = await emailTemplateModel.findOne({ name: "USER_SIGNUP_SUCCESS" });
-    let content = eval("`" + userSignupSuccessTemplate.content + "`");
+    await userData.save();
+    // let userSignupSuccessTemplate = await emailTemplateModel.findOne({ name: "USER_SIGNUP_SUCCESS" });
+    // let content = eval("`" + userSignupSuccessTemplate.content + "`");
     let subject = "Signup Successfully!";
 
-    helper.sendEmail(userData?.email, subject, content);
+    // helper.sendEmail(userData?.email, subject, content);
     let accessToken = await authFile.generateToken(userData);
 
     return res.json({
@@ -120,20 +127,33 @@ exports.signin = async (req, res) => {
       });
     }
 
+    if (!user.isActive) {
+      return res.json({
+        success: false,
+        message: "Please complete signup before login!"
+      });
+    }
+
     let OTP = Math.floor(100000 + Math.random() * 900000);
+    console.log(OTP)
 
     user.otp = OTP.toString(); 
     let userData = await user.save();
 
-    let userOTPTemplate = await emailTemplateModel.findOne({ name: "USER_SIGNIN_OTP" });
-    let content = eval("`" + userOTPTemplate.content + "`");
+    // let userOTPTemplate = await emailTemplateModel.findOne({ name: "USER_SIGNIN_OTP" });
+    // let content = eval("`" + userOTPTemplate.content + "`");
     let subject = "Verification OTP";
 
-    helper.sendEmail(user?.email, subject, content);
+    // helper.sendEmail(user?.email, subject, content);
 
     res.json({
       success: true,
-      data: userData
+      data: {
+        _id: userData._id,
+        name: userData.name,
+        email: userData.email,
+        isAdmin: userData.isAdmin,
+      }
     });
 
   } catch (err) {
