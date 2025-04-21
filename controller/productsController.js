@@ -46,6 +46,37 @@ exports.uploadVideo = async (req, res) => {
   }
 };
 
+exports.editVideo = async (req, res) => {
+  let videoId = req.body.videoId;
+  try {
+    if (!req.file && !videoId) {
+      return res.status(400).json({ success: false, message: "Please provide the manditory fields" });
+    }
+
+    const uploadResponse = await uploadToImageKit({
+      fileBuffer: req.file.buffer,
+      originalname: req.file.originalname,
+      title: req.body?.title,
+      folder: "videos",
+    });
+
+    let updateVideo = await videoModel.findByIdAndUpdate(videoId, { videoUrl: uploadResponse.url }, { new: true });
+
+    res.json({
+      success: true,
+      message: "Video updated successfully",
+      data: {
+        title: updateVideo.title,
+        videoUrl: uploadResponse.url,
+        fileId: uploadResponse.fileId,
+      },
+    });
+  } catch (error) {
+    console.log("Error in editVideo: " + error);
+    res.json({ success: false, message: "Internal Server Error" });
+  }
+};
+
 exports.getVideos = async (req, res) => {
   let reqBody = req.body;
   try {
