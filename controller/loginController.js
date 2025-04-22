@@ -21,16 +21,16 @@ exports.signup = async (req, res) => {
     if (existingEmail) {
       return res.json({
         success: false,
-        message: "Email already exists!"
+        message: "The provided email address is already registered."
       });
     }
-
+    
     if (existingPhone) {
       return res.json({
         success: false,
-        message: "Phone number already exists!"
+        message: "The provided phone number is already associated with an existing account."
       });
-    };
+    }    
 
     // let OTP = Math.floor(100000 + Math.random() * 900000);
     let OTP = 123456;
