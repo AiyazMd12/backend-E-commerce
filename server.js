@@ -5,6 +5,15 @@ const bodyParser = require("body-parser");
 const app = express();
 require("./config/mongo");
 
+const cors = require("cors");
+app.use(cors());
+
+app.use(cors({
+  origin: ['http://localhost:3000', process.env.FRONTEND_DOMAIN],
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  credentials: true
+}));
+
 app.use(express.json());
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: false }));
