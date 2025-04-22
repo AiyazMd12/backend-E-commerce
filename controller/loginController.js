@@ -150,6 +150,7 @@ exports.signin = async (req, res) => {
 
     res.json({
       success: true,
+      message: "OTP sent successful.",
       data: {
         _id: userData._id,
         name: userData.name,
