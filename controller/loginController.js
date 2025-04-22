@@ -32,7 +32,8 @@ exports.signup = async (req, res) => {
       });
     };
 
-    let OTP = Math.floor(100000 + Math.random() * 900000);
+    // let OTP = Math.floor(100000 + Math.random() * 900000);
+    let OTP = 123456;
     console.log(OTP);
 
     let user = new userModel({
@@ -134,7 +135,8 @@ exports.signin = async (req, res) => {
       });
     }
 
-    let OTP = Math.floor(100000 + Math.random() * 900000);
+    // let OTP = Math.floor(100000 + Math.random() * 900000);
+    let OTP = 123456;
     console.log(OTP)
 
     user.otp = OTP.toString(); 
