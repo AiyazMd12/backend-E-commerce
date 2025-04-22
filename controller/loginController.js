@@ -52,6 +52,8 @@ exports.signup = async (req, res) => {
       data: {
         _id: savedData._id,
         name: savedData.name,
+        isActive: false,
+        isAccountVerified: false,
         email: savedData.email,
         isAdmin: savedData.isAdmin,
       },
@@ -86,8 +88,16 @@ exports.verifySignup = async (req, res) => {
       });
     }
 
+    if (userData.isAccountVerified) {
+      return res.json({
+        success: true,
+        message: "Your account has already been verified. Please sign in using your registered email address."
+      });
+    }    
+
     userData.otp = null;
     userData.isActive = true;
+    userData.isAccountVerified = true;
     await userData.save();
     // let userSignupSuccessTemplate = await emailTemplateModel.findOne({ name: "USER_SIGNUP_SUCCESS" });
     // let content = eval("`" + userSignupSuccessTemplate.content + "`");
@@ -102,6 +112,8 @@ exports.verifySignup = async (req, res) => {
       accessToken: accessToken,
       data: {
         _id: userData._id,
+        isAccountVerified: userData.isAccountVerified,
+        isActive: userData.isActive,
         name: userData.name,
         email: userData.email,
         isAdmin: userData.isAdmin,
