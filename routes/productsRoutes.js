@@ -4,7 +4,7 @@ const authonticationController = require("../middleware/auth");
 const productsController = require("../controller/productsController");
 const multer = require('multer');
 const { videoStorage, imageStorage, uploadImages } = require('../config/cloudinary');
-const { upload } = require("../config/imagekitConfig");
+const { upload } = require("../config/imagekitConfig"); // imagekit
 
 const videoUpload = multer({ storage: videoStorage }); // cloudinary
 const imageUpload = multer({ storage: imageStorage });
@@ -16,6 +16,14 @@ app.post(
   // videoUpload.single("video"), // cloudinary
   upload.single("video"),
   productsController.uploadVideo
+);
+
+app.post(
+  "/editVideo",
+  // authonticationController.validateToken,
+  // videoUpload.single("video"), // cloudinary
+  upload.single("video"),
+  productsController.editVideo
 );
 
 app.post(

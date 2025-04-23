@@ -21,6 +21,11 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: false
     },
+    isAccountVerified: {
+        type: Boolean,
+        default: false,
+        required: false
+    },
     addressBook: [
         {
             name: { 

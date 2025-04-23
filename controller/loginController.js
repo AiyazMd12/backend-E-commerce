@@ -21,18 +21,19 @@ exports.signup = async (req, res) => {
     if (existingEmail) {
       return res.json({
         success: false,
-        message: "Email already exists!"
+        message: "The provided email address is already registered."
       });
     }
-
+    
     if (existingPhone) {
       return res.json({
         success: false,
-        message: "Phone number already exists!"
+        message: "The provided phone number is already associated with an existing account."
       });
-    };
+    }    
 
-    let OTP = Math.floor(100000 + Math.random() * 900000);
+    // let OTP = Math.floor(100000 + Math.random() * 900000);
+    let OTP = 123456;
     console.log(OTP);
 
     let user = new userModel({
@@ -51,6 +52,8 @@ exports.signup = async (req, res) => {
       data: {
         _id: savedData._id,
         name: savedData.name,
+        isActive: false,
+        isAccountVerified: false,
         email: savedData.email,
         isAdmin: savedData.isAdmin,
       },
@@ -85,8 +88,16 @@ exports.verifySignup = async (req, res) => {
       });
     }
 
+    if (userData.isAccountVerified) {
+      return res.json({
+        success: true,
+        message: "Your account has already been verified. Please sign in using your registered email address."
+      });
+    }    
+
     userData.otp = null;
     userData.isActive = true;
+    userData.isAccountVerified = true;
     await userData.save();
     // let userSignupSuccessTemplate = await emailTemplateModel.findOne({ name: "USER_SIGNUP_SUCCESS" });
     // let content = eval("`" + userSignupSuccessTemplate.content + "`");
@@ -101,6 +112,8 @@ exports.verifySignup = async (req, res) => {
       accessToken: accessToken,
       data: {
         _id: userData._id,
+        isAccountVerified: userData.isAccountVerified,
+        isActive: userData.isActive,
         name: userData.name,
         email: userData.email,
         isAdmin: userData.isAdmin,
@@ -134,7 +147,8 @@ exports.signin = async (req, res) => {
       });
     }
 
-    let OTP = Math.floor(100000 + Math.random() * 900000);
+    // let OTP = Math.floor(100000 + Math.random() * 900000);
+    let OTP = 123456;
     console.log(OTP)
 
     user.otp = OTP.toString(); 
@@ -148,6 +162,7 @@ exports.signin = async (req, res) => {
 
     res.json({
       success: true,
+      message: "OTP sent successful.",
       data: {
         _id: userData._id,
         name: userData.name,
